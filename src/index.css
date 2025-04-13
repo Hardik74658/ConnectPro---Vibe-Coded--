@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl leading-tight md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl leading-tight md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl leading-snug md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl leading-snug md:text-2xl;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  /* Button text */
+  button, .button {
+    @apply font-medium;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+  }
+  
+  .btn-primary {
+    @apply bg-connectpro-primary text-white px-4 py-2 rounded-xl hover:bg-connectpro-primary/90 transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-connectpro-secondary text-connectpro-primary px-4 py-2 rounded-xl hover:bg-connectpro-secondary/80 transition-colors;
+  }
+  
+  .btn-accent {
+    @apply bg-connectpro-accent text-white px-4 py-2 rounded-xl hover:bg-connectpro-accent/90 transition-colors;
+  }
+
+  .card-gradient {
+    @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900;
+  }
+
+  .card-border {
+    @apply border border-gray-100 dark:border-gray-800;
+  }
+
+  .settings-sidebar {
+    @apply sticky top-20 overflow-auto max-h-(calc(100vh - 6rem));
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-gray-100 dark:border-gray-800;
+  }
+}
+
+.staggered-animation > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.staggered-animation > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.staggered-animation > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.staggered-animation > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* Photo Upload Styles */
+.photo-upload-container {
+  @apply relative overflow-hidden rounded-2xl cursor-pointer transition-all hover:opacity-90;
+}
+
+.photo-upload-container input[type="file"] {
+  @apply absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10;
+}
+
+.photo-upload-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity hover:opacity-100;
+}
+
+.photo-upload-icon {
+  @apply text-white;
+}
+
+/* Fix for search icon alignment */
+.search-container .search-icon {
+  @apply flex items-center justify-center;
+}
+
+/* Sticky sidebar for settings page */
+.settings-sidebar {
+  position: sticky;
+  top: 5rem; /* Adjust based on your header height */
+  height: calc(100vh - 5rem);
+  overflow-y: auto;
+}
