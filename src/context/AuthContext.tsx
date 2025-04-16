@@ -1,16 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-type User = {
+export type UserRole = "user" | "recruiter";
+
+export type User = {
   id: string;
   name: string;
   email: string;
   profilePicture: string;
-  role: string;
-  skills: string[];
-  location: string;
-  connections: number;
-  joined: string;
+  role: UserRole;
+  company?: string; // Optional for recruiters
 };
 
 type AuthContextType = {
@@ -18,26 +17,15 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, role: UserRole, company?: string) => Promise<void>;
   logout: () => void;
-};
-
-const dummyUser: User = {
-  id: '1',
-  name: 'John Doe',
-  email: 'john@example.com',
-  profilePicture: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
-  role: 'Senior Software Engineer',
-  skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
-  location: 'San Francisco, CA',
-  connections: 500,
-  joined: '2023'
+  isRecruiter: () => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(dummyUser); // Set dummy user for testing
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -61,18 +49,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo, authorize any email/password with demo@example.com / password
+      // For demo, we'll have two test accounts: a regular user and a recruiter
       if (email === "demo@example.com" && password === "password") {
         const userData: User = {
           id: "user1",
           name: "Demo User",
           email: "demo@example.com",
           profilePicture: "https://randomuser.me/api/portraits/men/32.jpg",
-          role: 'Senior Software Engineer',
-          skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
-          location: 'San Francisco, CA',
-          connections: 500,
-          joined: '2023'
+          role: "user"
         };
         
         setUser(userData);
@@ -81,10 +65,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: "Login successful",
           description: "Welcome back to ConnectPro!",
         });
+      } else if (email === "recruiter@example.com" && password === "password") {
+        const userData: User = {
+          id: "recruiter1",
+          name: "Demo Recruiter",
+          email: "recruiter@example.com",
+          profilePicture: "https://randomuser.me/api/portraits/women/44.jpg",
+          role: "recruiter",
+          company: "TechHire Solutions"
+        };
+        
+        setUser(userData);
+        localStorage.setItem("connectpro_user", JSON.stringify(userData));
+        toast({
+          title: "Recruiter login successful",
+          description: "Welcome back to ConnectPro Recruiting!",
+        });
       } else {
         toast({
           title: "Login failed",
-          description: "Invalid credentials. Try demo@example.com / password",
+          description: "Try demo@example.com or recruiter@example.com with password: password",
           variant: "destructive"
         });
       }
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = async (name: string, email: string, password: string, role: UserRole, company?: string) => {
     try {
       setIsLoading(true);
       // Simulate API call
@@ -111,18 +111,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name,
         email,
         profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
-        role: 'Senior Software Engineer',
-        skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
-        location: 'San Francisco, CA',
-        connections: 500,
-        joined: '2023'
+        role,
+        ...(company && { company })
       };
       
       setUser(userData);
       localStorage.setItem("connectpro_user", JSON.stringify(userData));
       toast({
         title: "Account created",
-        description: "Welcome to ConnectPro! Your account has been created successfully.",
+        description: `Welcome to ConnectPro${role === 'recruiter' ? ' Recruiting' : ''}! Your account has been created successfully.`,
       });
     } catch (error) {
       console.error("Signup error:", error);
@@ -145,6 +142,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const isRecruiter = () => {
+    return user?.role === "recruiter";
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -153,7 +154,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         signup,
-        logout
+        logout,
+        isRecruiter
       }}
     >
       {children}

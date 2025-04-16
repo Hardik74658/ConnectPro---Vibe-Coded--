@@ -1,26 +1,29 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useRecruiter } from "@/context/RecruiterContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Lock, User } from "lucide-react";
+import { Toast as showToast } from "@/components/ui/toast";
 
 const Auth = () => {
-  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const [activeTab, setActiveTab] = useState<"login" | "signup" | "recruiter">("login");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
   const { login, signup, isAuthenticated } = useAuth();
+  const { handleRecruiterLogin } = useRecruiter();
 
   // Check if there's a signup query parameter
   useEffect(() => {
@@ -58,10 +61,32 @@ const Auth = () => {
 
     try {
       setIsSubmitting(true);
-      await signup(signupName, signupEmail, signupPassword);
+      setSignupError(null); // Clear previous error
+      await signup(signupName, signupEmail, signupPassword, "user");
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Signup error:", error);
+      setSignupError(error?.message || "Signup failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRecruiterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginEmail || !loginPassword) return;
+
+    try {
+      setIsSubmitting(true);
+      await handleRecruiterLogin(loginEmail, loginPassword);
+      navigate("/recruiter/dashboard");
+    } catch (error) {
+      console.error("Recruiter login error:", error);
+      toast({
+        title: "Login failed",
+        description: "Invalid recruiter credentials",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -75,10 +100,11 @@ const Auth = () => {
           <p className="text-gray-600">Connect with professionals and find opportunities</p>
         </div>
         
-        <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "signup")} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+        <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "signup" | "recruiter")} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="recruiter">Recruiter</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login">
@@ -228,6 +254,10 @@ const Auth = () => {
                     .
                   </div>
                   
+                  {signupError && (
+                    <div className="text-red-500 text-sm text-center">{signupError}</div>
+                  )}
+
                   <Button 
                     type="submit" 
                     className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90" 
@@ -251,6 +281,62 @@ const Auth = () => {
               </CardFooter>
             </Card>
           </TabsContent>
+
+          <TabsContent value="recruiter">
+            <Card className="border-none shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-center">Recruiter Login</CardTitle>
+                <CardDescription className="text-center">Login to manage your job postings and applications</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleRecruiterSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="recruiter-email">Email</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Mail className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <Input 
+                        id="recruiter-email" 
+                        type="email" 
+                        placeholder="recruiter@company.com" 
+                        value={loginEmail} 
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="recruiter-password">Password</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Lock className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <Input 
+                        id="recruiter-password" 
+                        type="password" 
+                        placeholder="••••••••" 
+                        value={loginPassword} 
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90" 
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Logging in..." : "Login as Recruiter"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
@@ -258,3 +344,11 @@ const Auth = () => {
 };
 
 export default Auth;
+function toast({ title, description, variant }: { title: string; description: string; variant: "default" | "destructive" }) {
+  showToast({
+    title,
+    content: description,
+    variant,
+  });
+}
+

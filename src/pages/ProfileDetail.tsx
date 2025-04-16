@@ -165,10 +165,10 @@ const ProfileDetail = () => {
           {/* Back Button */}
           <Button
             variant="ghost"
-            className={`flex items-center mb-8 hover:-translate-x-1 transition-transform ${
-              theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+            className={`flex items-center mb-8 hover:-translate-x-1 transition-transform duration-200 ${
+              theme === 'dark' ? 'text-gray-300 hover:text-gray-100' : 'text-gray-600 hover:text-gray-800'
             }`}
-            onClick={() => navigate()}
+            onClick={() => navigate("/profiles")}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back to Profiles
@@ -177,14 +177,14 @@ const ProfileDetail = () => {
           {/* Profile Header */}
           <div className={`${
             theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          } rounded-2xl shadow-xl overflow-hidden border ${
-            theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
-          } transform hover:scale-[1.01] transition-transform duration-300`}>
-            <div className="h-48 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"></div>
+          } rounded-xl shadow-lg overflow-hidden border ${
+            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+          } transform hover:scale-[1.02] transition-transform duration-300`}>
+            <div className="h-48 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient-x"></div>
             <div className="px-8 sm:px-10 pb-10 -mt-20">
               <div className="flex flex-col sm:flex-row items-center sm:items-end sm:space-x-5">
                 <div className="flex-shrink-0">
-                  <Avatar className="h-36 w-36 rounded-full border-4 border-white bg-white">
+                  <Avatar className="h-36 w-36 rounded-full border-4 border-white bg-white shadow-md">
                     <AvatarImage src={profile.avatar} alt={profile.name} />
                     <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
                   </Avatar>
@@ -193,11 +193,11 @@ const ProfileDetail = () => {
                   <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {profile.name}
                   </h1>
-                  <p className={`text-xl  ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <p className={`text-xl  ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                     {profile.title}
                   </p>
                   <div className={`flex items-center justify-center sm:justify-start mt-3 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
                   }`}>
                     <Building className="h-4 w-4 mr-1" />
                     <span>{profile.company}</span>
@@ -210,7 +210,7 @@ const ProfileDetail = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex items-center"
+                    className="flex items-center transition-colors duration-200 hover:bg-indigo-100 hover:text-indigo-700"
                     onClick={handleShare}
                   >
                     <Share className="h-4 w-4 mr-2" />
@@ -218,7 +218,11 @@ const ProfileDetail = () => {
                   </Button>
                   <Button
                     size="sm"
-                    className={isConnected ? "bg-gray-200 text-gray-800 hover:bg-gray-300" : ""}
+                    className={`transition-colors duration-200 ${
+                      isConnected
+                        ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    }`}
                     variant={isConnected ? "outline" : "default"}
                     onClick={handleConnect}
                   >
@@ -245,9 +249,9 @@ const ProfileDetail = () => {
               {/* About Section */}
               <div className={`${
                 theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-              } rounded-2xl shadow-lg p-8 border ${
-                theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
-              }`}>
+              } rounded-xl shadow-md p-8 border ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+              } transition-shadow duration-200 hover:shadow-lg`}>
                 <h2 className="text-2xl font-bold mb-4">About</h2>
                 <p className={`${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
@@ -340,19 +344,19 @@ const ProfileDetail = () => {
               {/* Skills */}
               <div className={`${
                 theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-              } rounded-2xl shadow-lg p-8 border ${
-                theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
-              }`}>
+              } rounded-xl shadow-md p-8 border ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+              } transition-shadow duration-200 hover:shadow-lg`}>
                 <h2 className="text-xl font-semibold mb-6">Skills</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.skills.map((skill, index) => (
                     <Badge 
                       key={index} 
-                      className={`px-3 py-1.5 ${
+                      className={`px-3 py-1.5 rounded-full ${
                         theme === 'dark' 
                           ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' 
-                          : 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border border-indigo-100 hover:from-indigo-100 hover:to-purple-100'
-                      } transition-colors`}
+                          : 'bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100'
+                      } transition-colors duration-200`}
                     >
                       {skill}
                     </Badge>
@@ -384,7 +388,10 @@ const ProfileDetail = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {similarProfiles.map((profile) => (
-                  <ProfileCard key={profile.id} profile={profile} />
+                  <ProfileCard 
+                    key={profile.id} 
+                    profile={profile} 
+                  />
                 ))}
               </div>
             </div>

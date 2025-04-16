@@ -107,7 +107,7 @@ const Community = () => {
             <h1 className="text-3xl font-bold mb-6">Community</h1>
             <div className="space-y-4">
               {categories.map((category) => (
-                <Card key={category.id}>
+                <Card key={category.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle>
                       <Link to={`/community/${category.id}`} className="hover:text-blue-500">

@@ -5,7 +5,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { Button } from "@/components/ui/button";
 import { 
   Menu, Bell, Sun, Moon, Home, Users, 
-  Briefcase, User, Settings, LogOut, ChevronDown
+  Briefcase, User, Settings, LogOut, ChevronDown, MessageSquare, BookOpen, Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,18 +20,21 @@ import ThemeIcon from "@/components/ThemeIcon";
 interface NavbarProps {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
+  role: "user" | "recruiter";
+  setRole: (role: "user" | "recruiter") => void;
 }
 
-const Navbar = memo(({ sidebarOpen, toggleSidebar }: NavbarProps) => {
+const Navbar = memo(({ sidebarOpen, toggleSidebar, role, setRole }: NavbarProps) => {
   const { theme, setTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
 
+  // Only two theme modes: light/dark
   const handleThemeToggle = () => {
-    const nextTheme = theme === "dark" ? "light" : theme === "light" ? "system" : "dark";
-    setTheme(nextTheme);
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  // Navigation items based on role
   const mainNav = [
     { 
       name: 'ConnectPro', 
@@ -39,24 +42,22 @@ const Navbar = memo(({ sidebarOpen, toggleSidebar }: NavbarProps) => {
       primary: true,
       className: "bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-bold text-2xl"
     },
-    { 
-      name: 'Home', 
-      href: '/dashboard', 
-      icon: Home,
-      className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200"
-    },
-    { 
-      name: 'Profiles', 
-      href: '/profiles', 
-      icon: Users,
-      className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200"
-    },
-    { 
-      name: 'Jobs', 
-      href: '/jobs', 
-      icon: Briefcase,
-      className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200"
-    },
+    ...(role === "user"
+      ? [
+          { name: 'Home', href: '/dashboard', icon: Home, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Profiles', href: '/profiles', icon: Users, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Jobs', href: '/jobs', icon: Briefcase, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Messages', href: '/messages', icon: MessageSquare, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Learning', href: '/learning', icon: BookOpen, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Community', href: '/community', icon: Globe, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+        ]
+      : [
+          { name: 'Dashboard', href: '/recruiter/dashboard', icon: Home, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Profiles', href: '/profiles', icon: Users, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Post Job', href: '/jobs', icon: Briefcase, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+          { name: 'Messages', href: '/messages', icon: MessageSquare, className: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200" },
+        ]
+    ),
   ];
 
   return (
@@ -103,6 +104,15 @@ const Navbar = memo(({ sidebarOpen, toggleSidebar }: NavbarProps) => {
               </Link>
             ))}
           </div>
+
+          {/* Role toggle button */}
+          <button
+            className="ml-2 px-3 py-1 rounded border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
+            onClick={() => setRole(prev => prev === "user" ? "recruiter" : "user")}
+            aria-label={`Switch to ${role === "user" ? "Recruiter" : "User"} mode`}
+          >
+            Switch to {role === "user" ? "Recruiter" : "User"}
+          </button>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -114,9 +124,7 @@ const Navbar = memo(({ sidebarOpen, toggleSidebar }: NavbarProps) => {
               "transition-colors",
               theme === "dark"
                 ? "text-yellow-400 hover:text-yellow-500 hover:bg-gray-800"
-                : theme === "light"
-                ? "text-gray-500 hover:text-gray-900"
-                : "text-blue-500 hover:text-blue-600"
+                : "text-gray-500 hover:text-gray-900"
             )}
           >
             <ThemeIcon theme={theme} />

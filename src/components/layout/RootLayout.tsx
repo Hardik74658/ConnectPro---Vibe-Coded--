@@ -11,7 +11,7 @@ interface NavbarProps {
   className?: string; // Add className as an optional prop
 }
 
-const RootLayout = () => {
+const RootLayout = ({ role, setRole }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { theme } = useTheme();
   const location = useLocation();
@@ -25,12 +25,22 @@ const RootLayout = () => {
       <Navbar 
         sidebarOpen={sidebarOpen} 
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        role={role}
+        setRole={setRole}
       />
-      <div className={cn(
-        "min-h-screen pt-24 transition-all duration-300",
-        sidebarOpen ? "pl-64" : "pl-0"
-      )}>
-        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div
+        className={cn(
+          "min-h-screen pt-24 transition-all duration-300",
+          // Only apply pl-64 on desktop when sidebar is open
+          sidebarOpen ? "md:pl-64" : "pl-0"
+        )}
+      >
+        <Sidebar 
+          open={sidebarOpen} 
+          setOpen={setSidebarOpen} 
+          role={role}
+          setRole={setRole}
+        />
         <main className="px-4 md:px-8">
           <Outlet />
         </main>

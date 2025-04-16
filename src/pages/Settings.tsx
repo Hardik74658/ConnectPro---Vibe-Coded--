@@ -43,8 +43,13 @@ const Settings = () => {
   const [showEmail, setShowEmail] = useState(false);
 
   // Appearance settings
-  type Theme = "light" | "dark" | "system"; // Define the Theme type
-  const [pendingTheme, setPendingTheme] = useState<Theme>("system"); // Temporary state for unsaved theme
+  type Theme = "light" | "dark"; // Only two modes
+  const [pendingTheme, setPendingTheme] = useState<Theme>("light"); // Default to light
+
+  // Sync pendingTheme with global theme (react to navbar/theme changes)
+  useEffect(() => {
+    setPendingTheme(theme as Theme);
+  }, [theme]);
 
   // Apply theme dynamically
   const applyTheme = (selectedTheme: string) => {
@@ -52,13 +57,9 @@ const Settings = () => {
     if (selectedTheme === "dark") {
       root.classList.add("dark");
       root.classList.remove("light");
-    } else if (selectedTheme === "light") {
+    } else {
       root.classList.add("light");
       root.classList.remove("dark");
-    } else {
-      root.classList.remove("dark", "light");
-      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      root.classList.add(systemPrefersDark ? "dark" : "light");
     }
   };
 
@@ -67,26 +68,15 @@ const Settings = () => {
     if (navbarIcon) {
       if (selectedTheme === "dark") {
         navbarIcon.innerHTML = `<svg class="h-6 w-6"><use href="#moon-icon"></use></svg>`;
-      } else if (selectedTheme === "light") {
-        navbarIcon.innerHTML = `<svg class="h-6 w-6"><use href="#sun-icon"></use></svg>`;
       } else {
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        navbarIcon.innerHTML = systemPrefersDark
-          ? `<svg class="h-6 w-6"><use href="#moon-icon"></use></svg>`
-          : `<svg class="h-6 w-6"><use href="#sun-icon"></use></svg>`;
+        navbarIcon.innerHTML = `<svg class="h-6 w-6"><use href="#sun-icon"></use></svg>`;
       }
     }
   };
 
   useEffect(() => {
-    if (theme === "system") {
-      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      applyTheme(systemPrefersDark ? "dark" : "light");
-      updateNavbarIcon(systemPrefersDark ? "dark" : "light");
-    } else {
-      applyTheme(theme);
-      updateNavbarIcon(theme);
-    }
+    applyTheme(theme);
+    updateNavbarIcon(theme);
   }, [theme]);
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -162,13 +152,12 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] dark:from-[#181c24] dark:via-[#232a36] dark:to-[#1a202c] transition-colors duration-500">
       <main className="flex-grow py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="mt-2 text-gray-600">
+          <div className="mb-8 animate-fade-in">
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight drop-shadow-lg">Settings</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
               Manage your account settings and preferences
             </p>
           </div>
@@ -177,7 +166,7 @@ const Settings = () => {
             {/* Settings Navigation (mobile) */}
             <div className="md:hidden">
               <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="grid grid-cols-4 mb-8">
+                <TabsList className="grid grid-cols-4 mb-8 bg-white/80 dark:bg-[#232a36]/80 rounded-2xl shadow-md backdrop-blur-md transition-all duration-300">
                   <TabsTrigger value="profile">
                     <User className="h-4 w-4" />
                   </TabsTrigger>
@@ -194,7 +183,7 @@ const Settings = () => {
                 
                 <TabsContent value="profile">
                   {/* Mobile Profile Content */}
-                  <Card>
+                  <Card className="rounded-2xl shadow-xl bg-white/80 dark:bg-[#232a36]/80 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                     <CardHeader>
                       <CardTitle>Profile Information</CardTitle>
                       <CardDescription>
@@ -204,11 +193,11 @@ const Settings = () => {
                     <CardContent>
                       <form onSubmit={handleSaveProfile} className="space-y-4">
                         <div className="flex flex-col items-center mb-6">
-                          <Avatar className="h-24 w-24 mb-4">
+                          <Avatar className="h-24 w-24 mb-4 shadow-lg ring-4 ring-connectpro-primary/20 transition-all duration-300">
                             <AvatarImage src={profilePicture} alt={name} />
                             <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                           </Avatar>
-                          <Button variant="outline" size="sm" asChild>
+                          <Button variant="outline" size="sm" asChild className="rounded-full border-connectpro-primary/40 hover:bg-connectpro-primary/10 transition-all duration-200">
                             <label htmlFor="profile-photo-upload-mobile" className="cursor-pointer">
                               <UploadCloud className="h-4 w-4 mr-2" />
                               Change Photo
@@ -272,7 +261,7 @@ const Settings = () => {
                         
                         <Button 
                           type="submit" 
-                          className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90"
+                          className="w-full bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                           disabled={isLoading}
                         >
                           {isLoading ? "Saving..." : "Save Changes"}
@@ -284,7 +273,7 @@ const Settings = () => {
                 
                 <TabsContent value="notifications">
                   {/* Mobile Notifications Content */}
-                  <Card>
+                  <Card className="rounded-2xl shadow-xl bg-white/80 dark:bg-[#232a36]/80 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                     <CardHeader>
                       <CardTitle>Notification Preferences</CardTitle>
                       <CardDescription>
@@ -345,7 +334,7 @@ const Settings = () => {
                         
                         <Button 
                           type="submit" 
-                          className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90"
+                          className="w-full bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                           disabled={isLoading}
                         >
                           {isLoading ? "Saving..." : "Save Preferences"}
@@ -357,7 +346,7 @@ const Settings = () => {
                 
                 <TabsContent value="privacy">
                   {/* Mobile Privacy Content */}
-                  <Card>
+                  <Card className="rounded-2xl shadow-xl bg-white/80 dark:bg-[#232a36]/80 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                     <CardHeader>
                       <CardTitle>Privacy Settings</CardTitle>
                       <CardDescription>
@@ -405,7 +394,7 @@ const Settings = () => {
                         
                         <Button 
                           type="submit" 
-                          className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90"
+                          className="w-full bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                           disabled={isLoading}
                         >
                           {isLoading ? "Saving..." : "Save Privacy Settings"}
@@ -417,7 +406,7 @@ const Settings = () => {
                 
                 <TabsContent value="appearance">
                   {/* Mobile Appearance Content */}
-                  <Card>
+                  <Card className="rounded-2xl shadow-xl bg-white/80 dark:bg-[#232a36]/80 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                     <CardHeader>
                       <CardTitle>Appearance Settings</CardTitle>
                       <CardDescription>
@@ -448,16 +437,12 @@ const Settings = () => {
                                 Dark Mode
                               </Label>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="system" id="theme-system" />
-                              <Label htmlFor="theme-system">Use System Preference</Label>
-                            </div>
                           </RadioGroup>
                         </div>
                         
                         <Button 
                           type="submit" 
-                          className="w-full bg-connectpro-primary hover:bg-connectpro-primary/90"
+                          className="w-full bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                           disabled={isLoading}
                         >
                           {isLoading ? "Saving..." : "Save Appearance Settings"}
@@ -471,7 +456,7 @@ const Settings = () => {
             
             {/* Settings Navigation (desktop) */}
             <div className="hidden md:block col-span-1">
-              <div className="bg-white rounded-lg shadow-sm space-y-1 p-2">
+              <div className="bg-white/80 dark:bg-[#232a36]/80 rounded-2xl shadow-xl space-y-1 p-2 backdrop-blur-md animate-fade-in-up transition-all duration-300">
                 <Button 
                   variant="ghost" 
                   className="w-full justify-start font-normal h-10"
@@ -514,7 +499,7 @@ const Settings = () => {
                 </Button>
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start font-normal h-10 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="w-full justify-start font-normal h-10 text-red-500 hover:text-white hover:bg-gradient-to-r hover:from-red-400 hover:to-red-600 rounded-full transition-all duration-200"
                   onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -526,7 +511,7 @@ const Settings = () => {
             {/* Settings Content (desktop) */}
             <div className="hidden md:block col-span-3 space-y-8">
               {/* Profile Section */}
-              <Card id="profile-section">
+              <Card id="profile-section" className="rounded-2xl shadow-2xl bg-white/90 dark:bg-[#232a36]/90 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                 <CardHeader>
                   <CardTitle>Profile Information</CardTitle>
                   <CardDescription>
@@ -588,11 +573,11 @@ const Settings = () => {
                       </div>
                       
                       <div className="ml-8 flex flex-col items-center">
-                        <Avatar className="h-32 w-32 mb-4">
+                        <Avatar className="h-32 w-32 mb-4 shadow-lg ring-4 ring-connectpro-primary/20 transition-all duration-300">
                           <AvatarImage src={profilePicture} alt={name} />
                           <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" asChild className="rounded-full border-connectpro-primary/40 hover:bg-connectpro-primary/10 transition-all duration-200">
                           <label htmlFor="profile-photo-upload" className="cursor-pointer">
                             <UploadCloud className="h-4 w-4 mr-2" />
                             Change Photo
@@ -610,10 +595,10 @@ const Settings = () => {
                   </form>
                 </CardContent>
                 <CardFooter className="border-t pt-6 flex justify-between">
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">Cancel</Button>
                   <Button 
                     onClick={handleSaveProfile}
-                    className="bg-connectpro-primary hover:bg-connectpro-primary/90"
+                    className="bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                     disabled={isLoading}
                   >
                     {isLoading ? "Saving..." : "Save Changes"}
@@ -622,7 +607,7 @@ const Settings = () => {
               </Card>
               
               {/* Notifications Section */}
-              <Card id="notifications-section">
+              <Card id="notifications-section" className="rounded-2xl shadow-2xl bg-white/90 dark:bg-[#232a36]/90 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                 <CardHeader>
                   <CardTitle>Notification Preferences</CardTitle>
                   <CardDescription>
@@ -683,10 +668,10 @@ const Settings = () => {
                   </form>
                 </CardContent>
                 <CardFooter className="border-t pt-6 flex justify-between">
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">Cancel</Button>
                   <Button 
                     onClick={handleSaveNotifications}
-                    className="bg-connectpro-primary hover:bg-connectpro-primary/90"
+                    className="bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                     disabled={isLoading}
                   >
                     {isLoading ? "Saving..." : "Save Preferences"}
@@ -695,7 +680,7 @@ const Settings = () => {
               </Card>
               
               {/* Privacy Section */}
-              <Card id="privacy-section">
+              <Card id="privacy-section" className="rounded-2xl shadow-2xl bg-white/90 dark:bg-[#232a36]/90 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                 <CardHeader>
                   <CardTitle>Privacy Settings</CardTitle>
                   <CardDescription>
@@ -743,10 +728,10 @@ const Settings = () => {
                   </form>
                 </CardContent>
                 <CardFooter className="border-t pt-6 flex justify-between">
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">Cancel</Button>
                   <Button 
                     onClick={handleSavePrivacy}
-                    className="bg-connectpro-primary hover:bg-connectpro-primary/90"
+                    className="bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                     disabled={isLoading}
                   >
                     {isLoading ? "Saving..." : "Save Privacy Settings"}
@@ -755,7 +740,7 @@ const Settings = () => {
               </Card>
               
               {/* Appearance Section */}
-              <Card id="appearance-section">
+              <Card id="appearance-section" className="rounded-2xl shadow-2xl bg-white/90 dark:bg-[#232a36]/90 backdrop-blur-md border-0 animate-fade-in-up transition-all duration-300">
                 <CardHeader>
                   <CardTitle>Appearance Settings</CardTitle>
                   <CardDescription>
@@ -786,19 +771,15 @@ const Settings = () => {
                             Dark Mode
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="system" id="theme-system-desktop" />
-                          <Label htmlFor="theme-system-desktop">Use System Preference</Label>
-                        </div>
                       </RadioGroup>
                     </div>
                   </form>
                 </CardContent>
                 <CardFooter className="border-t pt-6 flex justify-between">
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">Cancel</Button>
                   <Button 
                     onClick={handleSaveAppearance}
-                    className="bg-connectpro-primary hover:bg-connectpro-primary/90"
+                    className="bg-gradient-to-r from-connectpro-primary to-blue-500 hover:from-blue-500 hover:to-connectpro-primary text-white rounded-full shadow-lg transition-all duration-200"
                     disabled={isLoading}
                   >
                     {isLoading ? "Saving..." : "Save Appearance Settings"}
@@ -809,10 +790,15 @@ const Settings = () => {
           </div>
         </div>
       </main>
-      
       <Footer />
     </div>
   );
 };
+
+// Add animation keyframes (Tailwind CSS plugin or global CSS)
+// .animate-fade-in { animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1) both; }
+// .animate-fade-in-up { animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1) both; }
+// @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+// @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: none;} }
 
 export default Settings;

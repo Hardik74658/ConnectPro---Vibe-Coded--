@@ -2,7 +2,7 @@ import React from "react";
 import { Moon, Sun } from "lucide-react";
 
 interface ThemeIconProps {
-  theme: string;
+  theme: "light" | "dark";
 }
 
 const ThemeIcon: React.FC<ThemeIconProps> = ({ theme }) => {
@@ -13,14 +13,7 @@ const ThemeIcon: React.FC<ThemeIconProps> = ({ theme }) => {
   if (theme === "dark") {
     return <Sun {...iconProps} />;
   }
-  
-  if (theme === "light") {
-    return <Moon {...iconProps} />;
-  }
-
-  // System theme - check actual dark/light preference
-  const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return systemPrefersDark ? <Sun {...iconProps} /> : <Moon {...iconProps} />;
+  return <Moon {...iconProps} />;
 };
 
 export default ThemeIcon;

@@ -54,6 +54,16 @@ export interface Job {
   skills: string[];
 }
 
+export interface Recruiter {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  title: string;
+  avatar: string;
+  postedJobs: string[];
+}
+
 // Mock Profiles
 export const mockProfiles: Profile[] = [
   {
@@ -558,6 +568,27 @@ export const mockJobs: Job[] = [
   },
 ];
 
+export const mockRecruiters: Recruiter[] = [
+  {
+    id: 'rec1',
+    name: 'Sarah Thompson',
+    email: 'sarah@techcorp.com',
+    company: 'TechCorp',
+    title: 'Senior Technical Recruiter',
+    avatar: 'https://randomuser.me/api/portraits/women/8.jpg',
+    postedJobs: ['j1', 'j2', 'j3']
+  },
+  {
+    id: 'rec2',
+    name: 'Michael Chen',
+    email: 'michael@innovatetech.com',
+    company: 'InnovateTech',
+    title: 'Talent Acquisition Manager',
+    avatar: 'https://randomuser.me/api/portraits/men/9.jpg',
+    postedJobs: ['j4', 'j5']
+  }
+];
+
 // Helper function to get profile by ID
 export const getProfileById = (id: string): Profile | undefined => {
   return mockProfiles.find(profile => profile.id === id);
@@ -596,4 +627,15 @@ export const getSimilarProfiles = (profileId: string, limit: number = 3): Profil
       return bMatchCount - aMatchCount;
     })
     .slice(0, limit);
+};
+
+// Add helper functions for recruiters
+export const getRecruiterById = (id: string): Recruiter | undefined => {
+  return mockRecruiters.find(recruiter => recruiter.id === id);
+};
+
+export const getRecruiterJobs = (recruiterId: string): Job[] => {
+  const recruiter = getRecruiterById(recruiterId);
+  if (!recruiter) return [];
+  return mockJobs.filter(job => recruiter.postedJobs.includes(job.id));
 };

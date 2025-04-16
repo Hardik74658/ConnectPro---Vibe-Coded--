@@ -60,9 +60,10 @@ export default {
 				}
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)',
+				lg: '1.25rem', // more rounded
+				md: '1rem',
+				sm: '0.75rem',
+				DEFAULT: '1.25rem',
 				'2xl': '1rem',
 				'3xl': '1.5rem',
 			},

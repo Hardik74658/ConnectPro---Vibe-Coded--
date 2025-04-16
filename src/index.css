@@ -35,37 +35,37 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221 83% 53%;
 
-    --radius: 1rem;
+    --radius: 1.25rem; /* more rounded */
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 230 15% 10%; /* softer, less harsh dark */
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 230 16% 14%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 230 16% 14%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 230 12% 18%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 230 12% 22%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 221 83% 53%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 230 12% 22%;
+    --input: 230 12% 22%;
+    --ring: 221 83% 53%;
   }
 }
 
@@ -112,35 +112,35 @@
 
 @layer components {
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 rounded-2xl;
   }
   
   .btn-primary {
-    @apply bg-connectpro-primary text-white px-4 py-2 rounded-xl hover:bg-connectpro-primary/90 transition-colors;
+    @apply bg-connectpro-primary text-white px-5 py-2.5 rounded-2xl hover:bg-connectpro-primary/90 transition-colors shadow-none;
   }
   
   .btn-secondary {
-    @apply bg-connectpro-secondary text-connectpro-primary px-4 py-2 rounded-xl hover:bg-connectpro-secondary/80 transition-colors;
+    @apply bg-connectpro-secondary text-connectpro-primary px-5 py-2.5 rounded-2xl hover:bg-connectpro-secondary/80 transition-colors shadow-none;
   }
   
   .btn-accent {
-    @apply bg-connectpro-accent text-white px-4 py-2 rounded-xl hover:bg-connectpro-accent/90 transition-colors;
+    @apply bg-connectpro-accent text-white px-5 py-2.5 rounded-2xl hover:bg-connectpro-accent/90 transition-colors shadow-none;
   }
 
   .card-gradient {
-    @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900;
+    @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl;
   }
 
   .card-border {
-    @apply border border-gray-100 dark:border-gray-800;
+    @apply border border-gray-100 dark:border-gray-800 rounded-2xl;
   }
 
   .settings-sidebar {
-    @apply sticky top-20 overflow-auto max-h-(calc(100vh - 6rem));
+    @apply sticky top-20 overflow-auto max-h-[calc(100vh-6rem)] rounded-2xl bg-white dark:bg-gray-900/80 border border-gray-100 dark:border-gray-800;
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-bold;
   }
 
   .glass-card {
