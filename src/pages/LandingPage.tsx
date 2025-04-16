@@ -7,9 +7,11 @@ import {
   ArrowRight, CheckCircle2
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+// Add ThemeIcon import
+import ThemeIcon from "@/components/ThemeIcon";
 
 const LandingPage: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const navigate = useNavigate();
 
@@ -44,27 +46,50 @@ const LandingPage: React.FC = () => {
     "Python", "Java", "C#", "PHP", "Ruby", "TypeScript"
   ];
 
+  // Theme toggle handler (copied from Navbar)
+  const handleThemeToggle = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       
-      {/* Dashboard navigation buttons */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-4 z-10">
-        <Button 
-          onClick={() => navigate("/dashboard")} 
-          className="rounded-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg hover:from-indigo-600 hover:to-purple-600 transition-all duration-300"
-        >
-          Go to User Dashboard
-        </Button>
-        <Button 
-          onClick={() => navigate("/recruiter/dashboard")} 
-          className="rounded-full px-6 py-3 bg-gradient-to-r from-pink-500 to-blue-500 text-white shadow-lg hover:from-pink-600 hover:to-blue-600 transition-all duration-300"
-        >
-          Go to Recruiter Dashboard
-        </Button>
+      {/* Centered top controls: Theme toggle and dashboard buttons */}
+      <div className="relative z-50">
+        <div className="flex flex-col items-center gap-2 pt-4 sm:pt-6">
+          <div className="flex flex-col gap-2 w-full items-center sm:flex-row sm:justify-center sm:gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleThemeToggle} 
+              className={`transition-colors ${
+                theme === "dark"
+                  ? "text-yellow-400 hover:text-yellow-500 hover:bg-gray-800"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+              aria-label="Toggle theme"
+            >
+              <ThemeIcon theme={theme} />
+            </Button>
+            <Button 
+              onClick={() => navigate("/dashboard")} 
+              className="rounded-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 w-full sm:w-auto"
+            >
+              Go to User Dashboard
+            </Button>
+            <Button 
+              onClick={() => navigate("/recruiter/dashboard")} 
+              className="rounded-full px-6 py-3 bg-gradient-to-r from-pink-500 to-blue-500 text-white shadow-lg hover:from-pink-600 hover:to-blue-600 transition-all duration-300 w-full sm:w-auto"
+            >
+              Go to Recruiter Dashboard
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Hero Section */}
-      <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-[#181c24] dark:via-[#23283a] dark:to-[#1a1f2b] transition-colors duration-500">
+      <section className="pt-40 pb-16 md:pt-44 md:pb-24 bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-[#181c24] dark:via-[#23283a] dark:to-[#1a1f2b] transition-colors duration-500">
+        {/* ↑↑↑ Increased pt-40/md:pt-44 for more space below top controls */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center animate-fade-in"
