@@ -49,11 +49,6 @@ const Sidebar = ({ open, setOpen, role, setRole }: SidebarProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [setOpen]);
 
-  // Hide sidebar on landing page
-  if (location.pathname === "/") return null;
-
-  console.log("Sidebar role:", role); // Debug: check if role updates
-
   // Prevent body scroll and layout shift when sidebar is open on mobile
   useEffect(() => {
     if (isMobile && open) {
@@ -71,6 +66,8 @@ const Sidebar = ({ open, setOpen, role, setRole }: SidebarProps) => {
       document.body.style.width = "";
     };
   }, [isMobile, open]);
+
+  console.log("Sidebar role:", role); // Debug: check if role updates
 
   const navigation =
     role === "user"
@@ -97,6 +94,9 @@ const Sidebar = ({ open, setOpen, role, setRole }: SidebarProps) => {
     { name: 'Profile', href: '/profile', icon: UserCircle },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
+
+  // Hide sidebar on landing page - moved after all hooks are defined
+  if (location.pathname === "/") return null;
 
   return (
     <>
